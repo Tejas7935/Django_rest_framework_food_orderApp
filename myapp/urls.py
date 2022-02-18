@@ -22,6 +22,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from orderApp.views import UserViewSet, MyTokenObtainPairView,  LogoutAllView
 
 router = routers.DefaultRouter()
 router.register(r'items', views.ItemViewSet)
@@ -33,6 +34,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('register/', UserViewSet.as_view()),
+    path('login/', MyTokenObtainPairView.as_view()),
+    path('logout/', LogoutAllView.as_view(), name='auth_logout_all'),
     path('', include(router.urls))
 ]
 

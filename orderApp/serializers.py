@@ -1,8 +1,24 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Item, Order, Cart, Category, Menu
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
+    def create(self, validated_data):
+        user = User.objects.create(username=validated_data['username'])
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+        token['username'] = user.username
+        return token
 
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,22 +37,12 @@ class CategorySerializer(serializers.ModelSerializer):
         model= Category
         fields='__all__'
 
-
-
-
-
-
-
-
 class CartSerializer(serializers.ModelSerializer):
-    # item = ItemSerializer()
     class Meta:
-        model= Cart
+        model= Cart 
         fields='__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
-    # cart = CartSerializer()
-
     class Meta:
         model = Order
         fields='__all__'
