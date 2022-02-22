@@ -43,8 +43,12 @@ class CartSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
+    created_ts = serializers.ReadOnlyField()
+    updated_ts = serializers.ReadOnlyField()
     class Meta:
         model = Order
         fields='__all__'
+
+
 
 

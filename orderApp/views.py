@@ -5,6 +5,7 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, Bl
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from . import models
 from .serializers import *
 from django.shortcuts import render
 
@@ -15,7 +16,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from orderApp.models import Item, Order, Cart, Category, Menu
 from orderApp.serializers import ItemSerializer, OrderSerializer, CartSerializer, MenuSerializer, CategorySerializer, \
     UserSerializer
-
 
 class UserViewSet(APIView):
     def get(self, request):
@@ -30,7 +30,6 @@ class UserViewSet(APIView):
         serializer.save()
         user = User.objects.get(username=serializer.data["username"])
         refresh = RefreshToken.for_user(user)
-
         return Response({
             'payload': serializer.data,
             'refresh': str(refresh),
@@ -43,22 +42,21 @@ class LogoutAllView(APIView):
         tokens = OutstandingToken.objects.filter(user_id=request.user.id)
         for token in tokens:
             t, _ = BlacklistedToken.objects.get_or_create(token=token)
-
         return Response(status=status.HTTP_205_RESET_CONTENT)
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-class ItemViewSet(viewsets.ModelViewSet):
+class ItemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-class MenuViewSet(viewsets.ModelViewSet):
+class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     authentication_classes = [JWTAuthentication]
