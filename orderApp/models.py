@@ -34,7 +34,7 @@ class Cart(models.Model):
     quantity = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.user.name)
 
     class Meta:
         db_table = "fo_cart"
